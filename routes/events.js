@@ -7,7 +7,7 @@ const {
     createEvent,
     getEventById,
     deleteEvent
-} = require('../controllers/events.js');
+} = require('../controllers/Events.js');
 
 router.post('/events', async (req, res) => {
     console.log("req.body", req.body);
