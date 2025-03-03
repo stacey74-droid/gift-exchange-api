@@ -11,9 +11,14 @@ const {
 } = require('../controllers/Members.js');
 
 router.post('/members', async (req, res) => {
-    console.log("req.body", req.body);
-    await createMember(req.body);
-    res.send("done");
+    try {
+        console.log("req.body", req.body);
+        const member = await createMember(req.body);
+        res.status(201).json({ message: 'Member created successfully', member });
+    } catch (error) {
+        console.error('Error in /members endpoint:', error);
+        res.status(500).json({ message: 'An error occurred', error: error.message });
+    }
 });
 
 router.get('/members', async (req, res) => {
