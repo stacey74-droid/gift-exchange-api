@@ -10,9 +10,14 @@ const {
 } = require('../controllers/Events.js');
 
 router.post('/events', async (req, res) => {
-    console.log("req.body", req.body);
-    await createEvent(req.body);
-    res.send("done");
+    try {
+        console.log("req.body", req.body);
+        const event = await createEvent(req.body);
+        res.status(201).json({ message: 'Event created successfully', event });
+    } catch (error) {
+        console.error('Error in /events endpoint:', error);
+        res.status(500).json({ message: 'An error occurred', error: error.message });
+    }
 });
 
 router.get('/events', async (req, res) => {
