@@ -13,12 +13,17 @@ const getAllMembers = async (req, res) => {
 };
 
 //add member
-async function createMember(memberModel) {
-    let member = new Member({
-        ...memberModel
-    });
-    await member.save();
-    return member.toObject();
+async function createMember(memberData) {
+    try {
+        let member = new Member({
+            ...memberData
+        });
+        await member.save();
+        return member.toObject();
+    } catch (error) {
+        console.error('Error creating wishlist:', error);
+        throw error;
+    }
 }
 
 
