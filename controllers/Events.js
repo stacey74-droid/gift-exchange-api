@@ -19,12 +19,17 @@ async function getEventById(id){
 }
 
 //add event
-async function createEvent(eventModel){
-  let event = new Event({
-    ...eventModel
-  });
-  await event.save();
-  return event.toObject();
+async function createEvent(eventData){
+  try{
+    let event = new Event({
+      ...eventData
+    });
+    await event.save();
+    return event.toObject();
+  } catch (error) {
+    console.error('Error creating wishlist:', error);
+    throw error; 
+  }
 }
 
 //update an existing event
