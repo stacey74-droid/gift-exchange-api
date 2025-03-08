@@ -7,7 +7,9 @@ const {
     deleteMember,
     startDraw,
     getAssignedBuddy,
-    getBuddyWishlists
+    getBuddyWishlists,
+    login,
+    getMemberId
 } = require('../controllers/Members.js');
 
 router.post('/members', async (req, res) => {
@@ -49,6 +51,14 @@ router.get('/assigned-buddy/:memberId', async (req, res) =>{
 
 router.get('/buddy-wishlists/:memberId', async (req, res) => {
     await getBuddyWishlists(req, res); 
+});
+
+router.post('/login', async (req, res) => {
+    await login(req, res);
+});
+
+router.get('/member-id', async(req, res) =>{
+    await getMemberId(req, res);
 });
 
 module.exports = router;

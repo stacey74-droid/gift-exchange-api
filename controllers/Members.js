@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const getAllMembers = async (req, res) => {
     try {
         const members = await Member.find();
-        //res.json(events);
         return members.map(x => x.toObject());
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -157,6 +156,47 @@ const getBuddyWishlists = async (req, res) => {
     }
 };
 
+const login = async (req, res) => {
+    const { email } = req.body;
+  
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+  
+    try {
+      // Check if email exists in the database
+      const member = await Member.findOne({ email });
+      if (!member) {
+        return res.status(404).json({ message: 'Member not found' });
+      }
+  
+      // Return the email on successful login
+      console.log('Login successful for email:', email); // Debugging
+      res.json({ email });
+    } catch (error) {
+      console.error('Login error:', error); // Debugging
+      res.status(500).json({ message: 'An error occurred', error: error.message });
+    }
+};
+
+const getMemberId = async(req, res) =>{
+    try {
+        const { email, eventId } = req.query;
+
+        // Find the member based on email and eventId
+        const member = await Member.findOne({ email, eventId });
+        if (!member) {
+            return res.status(404).json({ message: 'Member not found' });
+        }
+
+        // Return the memberId
+        res.status(200).json({ memberId: member._id });
+    } catch (error) {
+        console.error('Error finding member:', error);
+        res.status(500).json({ message: 'An error occurred', error: error.message });
+    }
+}
+
 // A simple validation function for member data
 const validateMember = (member) => {
     return member.name &&
@@ -170,31 +210,7 @@ module.exports = {
     deleteMember,
     startDraw,
     getAssignedBuddy,
-    getBuddyWishlists
+    getBuddyWishlists,
+    login,
+    getMemberId
 };
-
-// Update an existing member
-// const updateMember = async (req, res) => {
-//     try {
-//         const updatedData = req.body;
-//         const member = await Member.findOne({ id: req.params.id });
-//         if (!member) {
-//             return res.status(404).json({ message: 'Member not found' });
-//         }
-//         // Update fields if provided, otherwise retain the current value
-//         member.name = updatedData.name || member.name;
-//         member.email = updatedData.email || member.email;
-//         member.eventId = updatedData.eventId || member.eventId;
-
-//         await member.save();
-//         res.json({ message: 'member updated successfully', member });
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// };
-
-//get member by id
-// async function getMemberById(id) {
-//     const member = await Member.findById(id);
-//     return member.toObject();
-// }
