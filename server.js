@@ -7,6 +7,7 @@ const memberRoutes = require("./routes/members");
 const wishlistRoutes = require("./routes/wishlist");
 const multer = require('multer');
 const path = require('path');
+
 // Initialize Express
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -63,6 +64,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
   const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
   res.json({ imageUrl });
 });
+
 
 app.use(eventRoutes);
 app.use(memberRoutes);
