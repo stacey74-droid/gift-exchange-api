@@ -17,7 +17,8 @@ const memberSchema = new mongoose.Schema({
     name: String,
     email: String,
     eventId: String,
-    assignedBuddy: String
+    assignedBuddy: String,
+    isHost: Boolean
 });
 
 const Member = mongoose.model('Member', memberSchema);
