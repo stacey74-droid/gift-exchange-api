@@ -1,12 +1,30 @@
 const { Event, Member, Wishlist } = require('../models');
-const mongoose = require('mongoose'); 
+const mongoose = require('mongoose');
 
-// Get all events
+// Get all events where the logged in user belong to
 const getAllEvents = async (req, res) => {
   try {
-    const events = await Event.find();
-    //res.json(events);
-    return events.map(x => x.toObject());
+    console.log('Query:', req.query);
+    const userEmail = req.query.email; // Retrieve email from query parameters
+    console.log('Email received:', userEmail); 
+
+    if (!userEmail) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+
+    const userMemberships = await Member.find({ email: userEmail });
+
+    if (userMemberships.length === 0) {
+      return res.status(404).json({ message: 'No events found for this user' });
+    }
+
+    // Extract eventIds from the user’s memberships
+    const eventIds = userMemberships.map(member => member.eventId);
+
+    // Find events where eventId matches
+    const events = await Event.find({ _id: { $in: eventIds } });
+
+    res.json(events);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -25,7 +43,7 @@ async function createEvent(eventData){
       ...eventData
     });
     await event.save();
-    return event.toObject();
+    return event;
   } catch (error) {
     console.error('Error creating wishlist:', error);
     throw error; 
@@ -76,14 +94,6 @@ const deleteEvent = async (id) => {
       return null; // Event not found
     }
 
-    // Fetch all members associated with the event
-    // const members = await Member.find({ id }).session(session);
-
-    // // Delete wishlists for each member and event
-    // for (const member of members) {
-    //   await Wishlist.deleteMany({ eventId: id, memberId: member._id }).session(session);
-    // }
-
     await Wishlist.deleteMany({ eventId: id }).session(session);
 
     // Delete all members associated with the event
@@ -102,7 +112,7 @@ const deleteEvent = async (id) => {
       session.endSession();
     }
     console.error('Error deleting event and related data:', error);
-    throw error; // Throw the error to be handled by the router
+    throw error;
   }
 };
 
@@ -124,30 +134,3 @@ module.exports = {
   deleteEvent,
 };
 
-// Get a single event by ID
-// const getEventById = async (req, res) => {
-//   try {
-//     const event = await Event.findOne({ id: req.params.id });
-//     if (!event) {
-//       return res.status(404).json({ message: 'Event not found' });
-//     }
-//     res.json(event);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
-// Create a new event
-// const createEvent = async (req, res) => {
-//   const newEvent = req.body;
-//   if (!validateEvent(newEvent)) {
-//     return res.status(400).json({ message: 'Missing required event data' });
-//   }
-//   newEvent.id = randomUUID(); // generate a unique id for the event
-//   try {
-//     const event = await Event.create(newEvent);
-//     res.status(201).json(event);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };

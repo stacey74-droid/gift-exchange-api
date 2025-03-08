@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { auth } = require('../controllers/Members.js');
 
 const {
     getAllEvents,
@@ -21,8 +22,8 @@ router.post('/events', async (req, res) => {
 });
 
 router.get('/events', async (req, res) => {
-    let events = await getAllEvents(req.body);
-    res.send(events);
+    let events = await getAllEvents(req, res); 
+    //res.send(events);
 });
 
 router.get('/events/:id', async (req, res) => {
