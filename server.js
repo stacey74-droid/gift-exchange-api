@@ -61,7 +61,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).send('No file uploaded.');
   }
-  const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+  const imageUrl = `https://gift-exchange-api.onrender.com/${req.file.filename}`;
   res.json({ imageUrl });
 });
 
